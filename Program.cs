@@ -50,12 +50,50 @@ namespace CONTROLL
 {
     internal class Program
     {
+        static void Main(string[] args)
+        {
+            if (!System.IO.File.Exists("token.txt"))
+            {
+                System.IO.File.Create("token.txt");
+            }
 
+            if (!System.IO.File.Exists("chatid.txt"))
+            {
+                System.IO.File.Create("chatid.txt");
+            }
+
+            ITelegramBotClient bot = new TelegramBotClient(System.IO.File.ReadAllText("token.txt"));
+
+            try
+            {
+                Console.WriteLine("Запущен бот " + bot.GetMeAsync().Result.FirstName);
+            }
+
+            catch
+            {
+                MessageBox.Show("Введите token бота в файле token.txt!", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(0);
+            }
+            var cts = new CancellationTokenSource();
+            var cancellationToken = cts.Token;
+            var receiverOptions = new ReceiverOptions
+            {
+                AllowedUpdates = { }, // receive all update types
+            };
+            bot.StartReceiving(
+                HandleUpdateAsync,
+                HandleErrorAsync,
+                receiverOptions,
+                cancellationToken
+            );
+            System.Threading.Thread.Sleep(-1);
+        }
         public static int status;
         static string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""D:\C# proect\CONTROL\DataBase\db.mdf"";Integrated Security=True";
         static SqlConnection sql = new SqlConnection(connectionString);
 
-        static ITelegramBotClient bot = new TelegramBotClient("6120629335:AAF8ERXPC7rCzWccZbKwi1WxODAzqBPObx8");
+        //static ITelegramBotClient bot = new TelegramBotClient(System.IO.File.ReadAllText("token.txt"));
+        //static ITelegramBotClient bot = new TelegramBotClient("6120629335:AAF8ERXPC7rCzWccZbKwi1WxODAzqBPObx8");
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
 
@@ -119,8 +157,18 @@ namespace CONTROLL
                 );
                 
                 var message = update.Message;
+                long chatid = default;
+                try
+                {
+                    chatid = Convert.ToInt64(System.IO.File.ReadAllText("chatid.txt"));
+                }
+                catch
+                {
+                    MessageBox.Show("Введите chatid в файле chatid.txt!", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Environment.Exit(0);
+                }
 
-                if (message.Chat.Id == 1324016724)
+                if (message.Chat.Id == chatid)
                 {
                     if (message.Type == MessageType.Document)
                     {
@@ -641,36 +689,6 @@ namespace CONTROLL
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
             MessageBox.Show(Convert.ToString(Newtonsoft.Json.JsonConvert.SerializeObject(exception)), "Error");
             //Console.WriteLine(exception);
-        }
-
-
-        static void Main(string[] args)
-        {
-            if (!System.IO.File.Exists("token.txt"))
-            {
-                System.IO.File.Create("token.txt");
-            }
-
-            if (!System.IO.File.Exists("chatid.txt"))
-            {
-                System.IO.File.Create("chatid.txt");
-            }
-
-            Console.WriteLine("Запущен бот " + bot.GetMeAsync().Result.FirstName);
-
-            var cts = new CancellationTokenSource();
-            var cancellationToken = cts.Token;
-            var receiverOptions = new ReceiverOptions
-            {
-                AllowedUpdates = { }, // receive all update types
-            };
-            bot.StartReceiving(
-                HandleUpdateAsync,
-                HandleErrorAsync,
-                receiverOptions,
-                cancellationToken
-            );
-            System.Threading.Thread.Sleep(-1);
         }
     }
 }
