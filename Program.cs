@@ -429,7 +429,6 @@ namespace CONTROLL
                                     await botClient.SendVideoAsync(message.Chat, System.IO.File.Open("video.mp4", System.IO.FileMode.Open));
                                     await botClient.SendTextMessageAsync(message.Chat, "Видео готово🎥", replyMarkup: keyboard);
                                     //System.IO.File.Delete("video.avi");
-
                                 }
                                 catch
                                 {
