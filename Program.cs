@@ -54,12 +54,12 @@ namespace CONTROLL
         {
             if (!System.IO.File.Exists("token.txt"))
             {
-                System.IO.File.Create("token.txt");
+                System.IO.File.Create("token.txt").Dispose();
             }
 
             if (!System.IO.File.Exists("chatid.txt"))
             {
-                System.IO.File.Create("chatid.txt");
+                System.IO.File.Create("chatid.txt").Dispose();
             }
 
             ITelegramBotClient bot = new TelegramBotClient(System.IO.File.ReadAllText("token.txt"));
