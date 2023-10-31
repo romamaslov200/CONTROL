@@ -50,6 +50,7 @@ namespace CONTROLL
 {
     internal class Program
     {
+
         public static int status;
         static string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""D:\C# proect\CONTROL\DataBase\db.mdf"";Integrated Security=True";
         static SqlConnection sql = new SqlConnection(connectionString);
@@ -645,6 +646,16 @@ namespace CONTROLL
 
         static void Main(string[] args)
         {
+            if (!System.IO.File.Exists("token.txt"))
+            {
+                System.IO.File.Create("token.txt");
+            }
+
+            if (!System.IO.File.Exists("chatid.txt"))
+            {
+                System.IO.File.Create("chatid.txt");
+            }
+
             Console.WriteLine("Запущен бот " + bot.GetMeAsync().Result.FirstName);
 
             var cts = new CancellationTokenSource();
