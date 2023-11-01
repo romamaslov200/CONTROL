@@ -89,7 +89,7 @@ namespace CONTROLL
             System.Threading.Thread.Sleep(-1);
         }
         public static int status;
-        static string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""D:\C# proect\CONTROL\DataBase\db.mdf"";Integrated Security=True";
+        static string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\DataBase\db.mdf;Integrated Security=True";
         static SqlConnection sql = new SqlConnection(connectionString);
 
         //static ITelegramBotClient bot = new TelegramBotClient(System.IO.File.ReadAllText("token.txt"));
